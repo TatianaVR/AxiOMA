@@ -3,6 +3,7 @@
 
 #include "viewer3d.h"
 #include "widget.h"
+#include <typeinfo>
 
 using namespace std;
 

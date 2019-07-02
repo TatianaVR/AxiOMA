@@ -22,7 +22,5 @@
 	<file>data/viewer/fill.png</file>
 	<file>data/viewer/light.png</file>
 	<file>data/viewer/highlight.png</file>
-        <file>shaders/ground.frag</file>
-        <file>shaders/ground.vert</file>    
   </qresource>
 </RCC>
