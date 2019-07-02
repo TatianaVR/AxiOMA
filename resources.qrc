@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/elements/vertical.png</file>
+        <file>data/elements/horizontal.png</file>
+        <file>data/elements/line.png</file>
+        <file>data/elements/curve.png</file>
+        <file>data/direction/left.png</file>
+        <file>data/direction/right.png</file>
+        <file>data/line/up.png</file>
+        <file>data/line/down.png</file>
+        <file>data/line/left.png</file>
+        <file>data/line/right.png</file>
+        <file>data/line/up_right.png</file>
+        <file>data/line/up_left.png</file> 
+        <file>data/line/down_right.png</file>
+        <file>data/line/down_left.png</file> 
+        <file>data/start.png</file>
+        <file>data/end.png</file>
+        <file>data/icon.png</file>
+        <file>data/file.png</file> 
+	<file>data/viewer/viewer.png</file>
+	<file>data/viewer/fill.png</file>
+	<file>data/viewer/light.png</file>
+	<file>data/viewer/highlight.png</file>
+        <file>shaders/ground.frag</file>
+        <file>shaders/ground.vert</file>    
+  </qresource>
+</RCC>
