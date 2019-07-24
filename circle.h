@@ -32,10 +32,12 @@ class Circle : public BlankElement
              if(R != 0.0)
              {
                 arcCenter = centers[ui->CircleCenter->sliderPosition()];
-             } else
+             }
+             else
              {
                 R = QLineF(arcCenter, endPoint).length();
              }
+
              graph = new QCPCurve(ui->widget->xAxis, ui->widget->yAxis);
 
              QVector <double> xPoints, zPoints;//значения по каждой из осей

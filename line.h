@@ -2,7 +2,6 @@
 #define LINE_H
 
 #include <blankelement.h>
-#include <exception>
 
 using namespace std;
 

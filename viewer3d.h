@@ -1,12 +1,6 @@
 #ifndef VIEWER3D_H
 #define VIEWER3D_H
 
-#include <QWidget>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QVector>
-#include <viewer_math.h>
-
 namespace Ui {
 class Viewer3D;
 }
@@ -21,14 +15,32 @@ public:
 
 private slots:
 
-    void recievePointsData(QVector <double>, QVector <double>);
+    void receivePointsData(QVector <double>, QVector <double>);
+    void updateLightModelAttributes();
+    void updateLightSettings();
+
+    void on_EndButton_clicked();
+    void on_figureColor_clicked();    
+    void on_highlightColor_clicked();
+    void on_ModelLight_currentIndexChanged(int index);
 
 signals:
     void sendViewType(int);
+    void sendDiffuseColor(QColor);
+    void sendSpecularColor(QColor);
+    void sendEyePosition(double, double, double);
+    void sendLightPosition(double, double, double);
+    void sendLightModelAttributes(QVector <QString>, QVector <double>);
+    void sendLightSettings(QVector3D, QVector3D);
     void sendPointsData(QVector <double>, QVector <double>);
 
 private:
     Ui::Viewer3D *ui;
+
+    QVector <QString> attributeName;
+    QVector <double> attributeValue;
+
+    void getAttributes();
 
 };
 

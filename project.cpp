@@ -3,7 +3,6 @@
 
 #include "viewer3d.h"
 #include "widget.h"
-#include <typeinfo>
 
 using namespace std;
 
@@ -14,6 +13,8 @@ Project::Project(QWidget *parent) :
     ui(new Ui::Project)
 {
     ui->setupUi(this);
+
+    this->setWindowFlags(Qt::FramelessWindowHint); //нет рамки
 
     //Задание вектора, хранящего минимум и максимум осей коориднат
     extremumValues.fill(0.0, 2); // extremumValuesх[0] <- min,  extremumValues[1] <- max
@@ -40,6 +41,7 @@ Project::Project(QWidget *parent) :
     }
 
     hasGap = false;
+    axis = 0;
 }
 
 //Удаление формы
@@ -65,7 +67,7 @@ void Project::mousePressEvent(QMouseEvent *event)
     if (!ui->EventList->selectedItems().isEmpty())
     {
         cleanSpinBox();
-        if(ui->EventList->currentRow() != 0)
+        if(ui->EventList->currentRow() > 0)
         {
             blank[ui->EventList->currentRow()]->getGraph()->setSelected(false);
             ui->widget->replot();
@@ -97,6 +99,7 @@ void Project::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_R:
             changeXZ();
+            break;
         default:
             break;
     }
@@ -131,7 +134,7 @@ void Project::changeXZ()
 
 //Функция, обрабатывающая входящие параметры при открытии текущего окна
 //project_name - имя проекта / isExist - триггер, определяющий открываем новый файл или уже существующий
-void Project::recieveOptions(QString project_name, bool isExist)
+void Project::receiveOptions(QString project_name, bool isExist)
 {
     ui->string_name->setText(project_name); //вывод имени заготовки
     ui->ElementParametrs->setCurrentIndex(0);
@@ -158,7 +161,10 @@ void Project::cleanSpinBox()
 
     ui->argAlpha_value->setCurrentIndex(0);
 
-    ui->CreateButton->setEnabled(true);
+    if(axis == 0)
+    {
+        ui->CreateButton->setEnabled(true);
+    }
     ui->RemoveButton->setEnabled(false);
     ui->ChangeButton->setEnabled(false);
 
@@ -358,11 +364,11 @@ void Project::drawChamfer(int index)
         b[0] = blank[blank.size() - 2]->b1();
         b[1] = blank[id]->getStartPoint().x() - qTan(angel) * val_x;
 
-        point1 = SLAE(blank[blank.size() - 2]->matA(angel), b);
+        point1 = SLAE(blank[blank.size() - 2]->getMatrixA(angel), b);
         blank[blank.size() - 2]->setEndPoint(point1);
 
         b[0] = blank[blank.size() - 1]->b1();
-        point2 = SLAE(blank[blank.size() - 1]->matA(angel), b);
+        point2 = SLAE(blank[blank.size() - 1]->getMatrixA(angel), b);
         blank[blank.size() - 1]->setStartPoint(point2);
     }
     else if(typeid(*blank[blank.size() - 1]) == typeid(*blank[blank.size() - 2]))
@@ -613,14 +619,14 @@ bool Project::isValid(int type, int previous)
         case 0:
             break;
         case 1:
-            if(blank[previous]->getEndPoint().y() == ui->LZ_argZ_value->value())
+            if(isEqual(blank[previous]->getEndPoint().y(), ui->LZ_argZ_value->value()))
             {
                 logAction("Ошибка ввода данных : начальная и конечная точки не могут совпадать", color);
                 validData = false;
             }
             break;
         case 2:
-            if(blank[previous]->getEndPoint().x() == ui->LX_argX_value->value())
+            if(isEqual(blank[previous]->getEndPoint().x(), ui->LX_argX_value->value()))
             {
                 logAction("Ошибка ввода данных : начальная и конечная точки не могут совпадать", color);
                 validData = false;
@@ -628,9 +634,9 @@ bool Project::isValid(int type, int previous)
             break;
         case 3:
         {
-            if((ui->L_argX_value->value() == blank[previous]->getEndPoint().x()) || (ui->L_argZ_value->value() == blank[previous]->getEndPoint().y()))
+            if(isEqual(ui->L_argX_value->value(), blank[previous]->getEndPoint().x()) || isEqual(ui->L_argZ_value->value(), blank[previous]->getEndPoint().y()))
             {
-                logAction("Ошибка ввода данных : попытка создать не наклонную линию", Qt::red);
+                logAction("Ошибка ввода данных : попытка создать не наклонную линию", color);
                 validData = false;
             }
             break;
@@ -685,7 +691,7 @@ void Project::on_CreateButton_clicked()
         case 4:
         {
             QString code = ui->DirectionButton->styleSheet().contains("left") ? "G03" : "G02";
-            if(ui->C_argR_value->value() != 0)
+            if(!isEqual(ui->C_argR_value->value(), 0.0))
             {
                 Circle *element = new Circle(code, ui->C_argR_value->value(), blank[previous]->getEndPoint(), QPointF(ui->C_argX_value->value(), ui->C_argZ_value->value()));
                 setSelectCenterEnable(true);
@@ -703,11 +709,7 @@ void Project::on_CreateButton_clicked()
             break;
         }
     }
-    /*if(blank.size() > 1 && blank[blank.size() - 2].k != 0.0)
-    {
-        computeIntersectionPoint();
-        drawElement(blank.size() - 2);
-    }*/
+
     //механизм отрисовки фасок и скруглений
     for(int i = 0; i <= transitions.size() - 1; i++)
     {
@@ -715,6 +717,7 @@ void Project::on_CreateButton_clicked()
         {
             transitions[i].R != 0.0 ? drawRounding(i) : drawChamfer(i);
             transitions.removeLast();
+            previous++;
         }
     }
 
@@ -1214,20 +1217,35 @@ void Project::on_Show3D_clicked()
     {
         Viewer3D *viewer = new Viewer3D();//открытие стартового окна
         viewer->show();
-        connect(this, SIGNAL(sendPointsData(QVector <double>, QVector <double>)), viewer, SLOT(recievePointsData(QVector <double>, QVector <double>)));
+        connect(this, SIGNAL(sendPointsData(QVector <double>, QVector <double>)), viewer, SLOT(receivePointsData(QVector <double>, QVector <double>)));
+
         QVector <double> xPoints, zPoints;
+        xPoints.append(blank[0]->getStartPoint().y());
+        zPoints.append(blank.last()->getEndPoint().x());
         xPoints.append(blank[0]->getStartPoint().x());
         zPoints.append(blank[0]->getStartPoint().y());
+
         for(int i = 1; i < blank.size(); i++)
         {
             if(dynamic_cast<Circle*>(blank[i]))
             {
                 QList<QCPCurveData> data = blank[i]->getGraph()->data()->values();
                 int delta = data.size() / 4;
-                for(int j = 0; j < data.size(); j += delta)
+                if(data[0].key < data.last().key)
                 {
-                    xPoints.append(data[j].value);
-                    zPoints.append(data[j].key);
+                    for(int j = delta; j < data.size(); j += delta)
+                    {
+                        xPoints.append(data[j].value);
+                        zPoints.append(data[j].key);
+                    }
+                }
+                else
+                {
+                    for(int j = data.size() - 1; j >= delta; j -= delta)
+                    {
+                        xPoints.append(data[j].value);
+                        zPoints.append(data[j].key);
+                    }
                 }
             }
             else
@@ -1237,10 +1255,69 @@ void Project::on_Show3D_clicked()
             }
         }
 
+        xPoints.append(blank[0]->getStartPoint().y());
+        zPoints.append(blank.last()->getEndPoint().x());
+
         emit sendPointsData(xPoints, zPoints);
     }
     else
     {
         logAction("Невозможно отобразить 3D вид : контур содержит разрыв", Qt::red);
     }
+}
+
+void Project::on_ChangeAxis_clicked()
+{
+    axis++;
+    axis = axis < 3 ? axis : 0;
+    extremumValues.fill(0.0, 2);
+    switch(axis)
+    {
+        case 0:
+            for(int i = 1; i < blank.size(); i++)
+            {
+                delete graphs[i - 1];
+                blank[i]->getGraph()->setVisible(true);
+                setAxesRange(blank[i]->getGraph()->data()->values());
+            }
+            graphs.clear();
+            ui->widget->xAxis->setLabel("Z");
+            ui->widget->yAxis->setLabel("X");
+            break;
+        case 1:
+            for(int i = 1; i < blank.size(); i++)
+            {
+                blank[i]->getGraph()->setVisible(false);
+                QVector <double> xPoints, zPoints;
+                double R = blank[i]->getEndPoint().x();
+                for(double t = 0.0; t < 360.0; t += 0.025)
+                {
+                    xPoints.append(R * qCos(t * M_PI / 180.0));
+                    zPoints.append(R * qSin(t * M_PI / 180.0));
+                }
+                graphs.append(new QCPCurve(ui->widget->xAxis, ui->widget->yAxis));
+                graphs[i - 1]->setData(zPoints,xPoints);
+                setAxesRange(graphs[i - 1]->data()->values());
+            }
+            ui->widget->xAxis->setLabel("Y");
+            ui->widget->yAxis->setLabel("X");
+            break;
+        case 2:
+            for(int i = 1; i < blank.size(); i++)
+            {
+                QVector <double> xPoints, zPoints;
+                double R = blank[i]->getEndPoint().y();
+                for(double t = 0.0; t < 360.0; t += 0.025)
+                {
+                    xPoints.append(R * qCos(t * M_PI / 180.0));
+                    zPoints.append(R * qSin(t * M_PI / 180.0));
+                }
+                graphs[i - 1]->setData(zPoints,xPoints);
+                setAxesRange(graphs[i - 1]->data()->values());
+            }
+            ui->widget->xAxis->setLabel("Z");
+            ui->widget->yAxis->setLabel("Y");
+            break;
+    }
+    ui->widget->replot();
 }

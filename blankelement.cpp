@@ -57,11 +57,6 @@ void BlankElement::setEndPointZ(double z)
     endPoint.ry() = z;
 }
 
-void BlankElement::setGraph(QCPCurve * newGraph)
-{
-    graph = newGraph;
-}
-
 QString BlankElement::getCodeElement()
 {
     return codeElement;
@@ -82,7 +77,7 @@ QCPCurve *BlankElement::getGraph()
     return graph;
 }
 
-QVector < QVector <double> > BlankElement::matA(double angel)
+QVector < QVector <double> > BlankElement::getMatrixA(double angel)
 {
     return
     {
@@ -101,9 +96,3 @@ void BlankElement::swapXZ()
     startPoint = QPointF(startPoint.y(), startPoint.x());
     endPoint = QPointF(endPoint.y(), endPoint.x());
 }
-
-/*void BlankElement::test(Ui::Project *window)
-{
-    window->test->setValue(1.0);
-}*/
-

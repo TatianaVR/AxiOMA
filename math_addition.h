@@ -1,9 +1,6 @@
 #ifndef MATH_ADDITION_H
 #define MATH_ADDITION_H
 
-#include <QVector>
-#include <QPointF>
-
 #define EPSILON 1e-4
 
 void LU(QVector <QVector <double> > &L, QVector <QVector <double> > &U);

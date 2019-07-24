@@ -85,9 +85,9 @@ QVector < QVector <double> > inverse_matrix(QVector < QVector <double> > L, QVec
     {
         for(int j = i + 1; j < N; j++)
         {
-          double s = IM[i][j];
+          double swapValue = IM[i][j];
           IM[i][j] = IM[j][i];
-          IM[j][i] = s;
+          IM[j][i] = swapValue;
         }
     }
 

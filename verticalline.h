@@ -2,7 +2,6 @@
 #define VERTICALLINE_H
 
 #include <blankelement.h>
-#include <exception>
 
 using namespace std;
 

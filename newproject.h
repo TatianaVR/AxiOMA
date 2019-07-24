@@ -1,8 +1,6 @@
 #ifndef NEWPROJECT_H
 #define NEWPROJECT_H
 
-#include <QWidget>
-
 namespace Ui {
 class NewProject;
 }
@@ -22,7 +20,7 @@ private slots:
     void on_YesButton_clicked();
     void on_NoButton_clicked();
 
-    void on_project_name_textChanged(const QString &arg1);
+    void clearErrorMessage();
 
 private:
     Ui::NewProject *ui;

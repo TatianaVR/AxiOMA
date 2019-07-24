@@ -1,14 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
 
-#include <QDebug>
-#include <QDir>
-#include <QMessageBox>
-#include <QFileSystemWatcher>
-#include <QDateTime>
-#include <QRegExpValidator>
-
-#include <Windows.h>
 #include <newproject.h>
 #include <project.h>
 
@@ -27,6 +19,8 @@ Widget::Widget(QWidget *parent) :
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
     watcher->addPath(QApplication::applicationDirPath() + "/models");
     connect(watcher, SIGNAL(directoryChanged(QString)), this, SLOT(getFileList()));
+
+    connect(ui->BlanksFiles, SIGNAL(doubleClicked(QModelIndex)), ui->SelectButton, SLOT(click())); //открытие файла по двойному нажатию клавиши мыши
 
 }
 
@@ -63,7 +57,7 @@ void Widget::on_SelectButton_clicked()
 {
     Project *window = new Project();
     window->show();
-    connect(this, SIGNAL(sendOptions(QString, bool)), window, SLOT(recieveOptions(QString, bool)));
+    connect(this, SIGNAL(sendOptions(QString, bool)), window, SLOT(receiveOptions(QString, bool)));
     emit sendOptions(ui->BlanksFiles->item(ui->BlanksFiles->currentRow(), 1)->text(), true);
     close();
 }
@@ -107,13 +101,6 @@ void Widget::on_RemoveButton_clicked()
     ui->RemoveButton->setEnabled(false);
 }
 
-//открытие файла по двойному нажатию клавиши мыши
-void Widget::on_BlanksFiles_doubleClicked(const QModelIndex &index)
-{
-    Q_UNUSED(index);
-    on_SelectButton_clicked();
-}
-
 //закрытие окна
 void Widget::on_ExitButton_clicked()
 {
@@ -121,7 +108,7 @@ void Widget::on_ExitButton_clicked()
 }
 
 //вычисление размера файла в соответствующих единицах
-QString fileSize(qint64 nSize)
+QString getFileSize(qint64 nSize)
 {
     qint64 i = 0;
     for (; nSize > 1023; nSize /= 1024, ++i) { }
@@ -168,7 +155,7 @@ void Widget::getFileList()
         ui->BlanksFiles->setItem(ui->BlanksFiles->rowCount() - 1, 1, new QTableWidgetItem(tr("%1").arg(current_file.baseName())));
         ui->BlanksFiles->setItem(ui->BlanksFiles->rowCount() - 1, 2, new QTableWidgetItem(tr("%1").arg(current_file.lastModified().toString("dd.MM.yyyy"))));
         ui->BlanksFiles->setItem(ui->BlanksFiles->rowCount() - 1, 3, new QTableWidgetItem(tr("%1").arg(current_file.lastModified().toString("hh:mm"))));
-        ui->BlanksFiles->setItem(ui->BlanksFiles->rowCount() - 1, 4, new QTableWidgetItem(tr("%1").arg(fileSize(current_file.size()))));
+        ui->BlanksFiles->setItem(ui->BlanksFiles->rowCount() - 1, 4, new QTableWidgetItem(tr("%1").arg(getFileSize(current_file.size()))));
     }
 
     ui->BlanksFiles->setColumnWidth(0,32);

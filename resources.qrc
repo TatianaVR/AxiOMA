@@ -11,16 +11,45 @@
         <file>data/line/left.png</file>
         <file>data/line/right.png</file>
         <file>data/line/up_right.png</file>
-        <file>data/line/up_left.png</file> 
+        <file>data/line/up_left.png</file>
         <file>data/line/down_right.png</file>
-        <file>data/line/down_left.png</file> 
+        <file>data/line/down_left.png</file>
         <file>data/start.png</file>
         <file>data/end.png</file>
         <file>data/icon.png</file>
-        <file>data/file.png</file> 
-	<file>data/viewer/viewer.png</file>
-	<file>data/viewer/fill.png</file>
-	<file>data/viewer/light.png</file>
-	<file>data/viewer/highlight.png</file>
-  </qresource>
+        <file>data/file.png</file>
+        <file>data/axis.png</file>
+        <file>data/viewer/viewer.png</file>
+        <file>data/viewer/fill.png</file>
+        <file>data/viewer/light.png</file>
+        <file>data/viewer/highlight.png</file>
+        <file>shaders/Lambert/shader.frag</file>
+        <file>shaders/Lambert/shader.vert</file>
+        <file>shaders/Wrap-around/shader.frag</file>
+        <file>shaders/Wrap-around/shader.vert</file>
+        <file>shaders/Phong/shader.frag</file>
+        <file>shaders/Phong/shader.vert</file>
+        <file>shaders/Blinn/shader.frag</file>
+        <file>shaders/Blinn/shader.vert</file>
+        <file>shaders/Ward/shader.frag</file>
+        <file>shaders/Ward/shader.vert</file>
+        <file>shaders/Oren-Nayar/shader.frag</file>
+        <file>shaders/Oren-Nayar/shader.vert</file>
+        <file>shaders/Cook-Torrance/shader.frag</file>
+        <file>shaders/Cook-Torrance/shader.vert</file>
+        <file>shaders/Minnaert/shader.frag</file>
+        <file>shaders/Minnaert/shader.vert</file>
+        <file>shaders/Toon shading/shader.frag</file>
+        <file>shaders/Toon shading/shader.vert</file>
+        <file>shaders/Gooch/shader.frag</file>
+        <file>shaders/Gooch/shader.vert</file>
+        <file>shaders/Rim/shader.frag</file>
+        <file>shaders/Rim/shader.vert</file>
+        <file>shaders/Subsurface scattering/shader.frag</file>
+        <file>shaders/Subsurface scattering/shader.vert</file>
+        <file>shaders/Lommel-Seeliger/shader.frag</file>
+        <file>shaders/Lommel-Seeliger/shader.vert</file> 
+		<file>shaders/Strauss/shader.frag</file>
+        <file>shaders/Strauss/shader.vert</file>
+    </qresource>
 </RCC>

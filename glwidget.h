@@ -1,11 +1,6 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
-#include <QGLWidget>
-#include <QOpenGLShaderProgram>
-#include <QVector>
-#include <viewer_math.h>
-
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -18,34 +13,44 @@ protected:
     void paintGL();
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
 
+    void calculatePoints();
+
 private slots:
-    void recieveViewType(int);
-    void recievePointsData(QVector <double>, QVector <double>);
-    void recieveDensity(int);
-    void changeRotationAxis(int);
+    void receiveViewType(int);
+    void receivePointsData(QVector <double>, QVector <double>);
+    void receiveDensity(int);
+    void receiveModelLight(const QString);
+    void receiveDiffuseColor(QColor);
+    void receiveSpecularColor(QColor);
+    void receiveLightModelAttributes(QVector <QString>, QVector <double>);
+    void receiveLightSettings(QVector3D, QVector3D);
+    void changeRotationAxis();
 
 private:
-    void draw();
-    int faceAtPosition(const QPoint &pos);
+    void drawSurface();
 
-    GLfloat rotationX;
-    GLfloat rotationY;
-    GLfloat rotationZ;
-    QColor faceColors[4];
+    GLfloat rotationX, rotationY, rotationZ;
+    QColor diffuseColor, specularColor;
     QPoint lastPos;
 
     QVector <double> xPoints, zPoints;
-    QVector <Point> Points, vectPoints;
-    QVector <int> vectorIndex;
 
-    int viewType, steps_u;
+    int viewType, steps_t, steps_u;
     double scale;
 
     QOpenGLShaderProgram myShader;
 
+    QVector < QVector3D > GeometricArray;
+    QVector < QVector < QVector3D > > ResaultGeometric;
+
+    QVector <QString> attributeName;
+    QVector <double> attributeValue;
+
+    QVector4D lightPosition, eyePosition;
+
+    QString lightModelName;
 };
 
 #endif // GLWIDGET_H

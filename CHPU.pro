@@ -22,8 +22,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+CONFIG += precompile_header
+PRECOMPILED_HEADER = headers.h
+
 SOURCES += main.cpp\
-    project.cpp \
     widget.cpp \
     newproject.cpp \
     qcustomplot.cpp \
@@ -35,11 +37,10 @@ SOURCES += main.cpp\
     line.cpp \
     startingpoint.cpp \
     viewer3d.cpp \
-    viewer_math.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    project.cpp
 
 HEADERS  += \
-    project.h \
     widget.h \
     newproject.h \
     qcustomplot.h \
@@ -51,20 +52,20 @@ HEADERS  += \
     circle.h \
     startingpoint.h \
     viewer3d.h \
-    viewer_math.h \
-    glwidget.h
+    glwidget.h \
+    project.h \
 
 FORMS    += \
-    project.ui \
     widget.ui \
     newproject.ui \
-    viewer3d.ui
+    viewer3d.ui \
+    project.ui
 
 RESOURCES += \
     resources.qrc
 
 win32
 {
- LIBS += -lopengl32
+ LIBS += -lopengl32 -lglu32
 }
 

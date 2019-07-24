@@ -1,19 +1,6 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <QWidget>
-#include <QPointF>
-#include <QVector>
-#include <QString>
-#include <QListWidgetItem>
-#include <QDebug>
-#include <QList>
-#include <QDoubleSpinBox>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QtMath>
-#include <algorithm>
-
 #include <math_addition.h>
 #include <qcustomplot.h>
 #include <startingpoint.h>
@@ -23,8 +10,6 @@
 #include <circle.h>
 
 class BlankElement;
-
-using namespace std;
 
 namespace Ui {
 class Project;
@@ -38,11 +23,11 @@ public:
     explicit Project(QWidget *parent = 0);
     ~Project();
 
-    Ui::Project *ui;
+     Ui::Project *ui;
 
 private slots:
 
-    void recieveOptions(QString project_name, bool isExist);
+    void receiveOptions(QString, bool);
     void definitionItemIndex(QMouseEvent *);
     void showToolTip(QMouseEvent *event);
     void repaintSelectedElement(QListWidgetItem*, QListWidgetItem *);
@@ -69,11 +54,12 @@ private slots:
     void on_argFSZ_value_valueChanged(double);
     void on_argAlpha_value_currentIndexChanged(int);
 
-
     void on_Show3D_clicked();
+    void on_ChangeAxis_clicked();
 
 signals:
     void sendPointsData(QVector <double>, QVector <double>);
+
 private:
 
     //структура данных, хранящая все необходимые параметры переходов (фасок / скруглений)
@@ -89,7 +75,9 @@ private:
     QVector <Transition> transitions; //вектор скруглений и фасок
     QVector <double> extremumValues; //минимальные и максимальные значения осей
     QVector <QPointF> centers; //возможные центры дуги, строящейся по заданным двум точкам и радиусу
+    QVector <QCPCurve *> graphs;
     bool hasGap;
+    int axis;
 
     void cleanSpinBox(); //очистка всех полей ввода
     void setTransitionEnable(bool);
@@ -102,9 +90,9 @@ private:
     void drawRounding(int); //функция отрисовки скруглений
 
     void addToEventList(int); //добавление элемента в заготовку и отображение на виджете
-    bool combineElements(int); //объединение двух одинаковых последовательных элементов
-    bool isContinuousLoop();
-    bool isValid(int, int);
+    bool combineElements(int); //проверка необходимости объединенить два одинаковых последовательных элемента
+    bool isContinuousLoop(); //проверка контура на замкнутость
+    bool isValid(int, int); //проверка валидности элементов для создания фаски / скругления
 
     void logAction(QString, QColor); //вывод информации в лог
     void autoFillGap(int); //автоматическое устранение разрыва
@@ -119,6 +107,5 @@ private:
     //void computeIntersectionPoint(double epsilon = 10e-4); //вычисление точки пересечния (если прямая задана углом наклона)
     bool eventFilter(QObject*, QEvent*);
 };
-
 
 #endif // PROJECT_H

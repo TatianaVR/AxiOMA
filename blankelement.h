@@ -1,12 +1,7 @@
 #ifndef BLANKELEMENT_H
 #define BLANKELEMENT_H
 
-#include <QString>
-#include <QPointF>
-#include <qcustomplot.h>
-#include <QSpinBox>
 #include <ui_project.h>
-#include <math_addition.h>
 
 class BlankElement
 {
@@ -23,13 +18,12 @@ class BlankElement
         void setEndPoint(double, double);
         void setEndPointX(double);
         void setEndPointZ(double);
-        void setGraph(QCPCurve *);
         QString getCodeElement();
         QPointF getStartPoint();
         QPointF getEndPoint();
         QCPCurve *getGraph();
 
-        QVector < QVector <double> > matA(double);
+        QVector < QVector <double> > getMatrixA(double);
         double b1();
 
         virtual void draw(Ui::Project *) = 0;
